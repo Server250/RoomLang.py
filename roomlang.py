@@ -8,12 +8,16 @@ description: Contains all barebones RoomLang functionality and data structures
 """
 
 # The data structure for holding a room.
-# roomId - How the room shall be referenced (one char, a-zA-Z0-9)
-# w - width
-# h - height
-# n,e,s,w - north, east, south and west doors respectively
 class Room:
+    
+    """
+    Initialise the "Room" class.
 
+    roomId - How the room shall be referenced (one char, a-zA-Z0-9)
+    w - width
+    h - height
+    n,e,s,w - north, east, south and west doors respectively
+    """
     def __init__(self, roomId,wid,hei,n=None,e=None,s=None,w=None):
         self.id = roomId
         self.width = int(wid)
@@ -37,6 +41,7 @@ class Room:
         if (self.east):  print("E -".rjust(8).ljust(ljustsize)+str(self.east).rjust(rjustsize))
         if (self.south):  print("S -".rjust(8).ljust(ljustsize)+str(self.south).rjust(rjustsize))
         if (self.west):  print("W -".rjust(8).ljust(ljustsize)+str(self.west).rjust(rjustsize))
+
 # Program Entry Point
 if __name__=="__main__":
     print("This module is intended to be imported by your project, not run itself.")
