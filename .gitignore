@@ -1,1 +1,5 @@
+# Ignore any text files as these are likely local notes
+*.txt
 
+# Ignore swp files because this just means I'm committing without closing vim
+*.swp
