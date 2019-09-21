@@ -7,7 +7,7 @@ Hopefully, "RoomLang" will be a nice stepping stone from graphical editors for g
 --------------------------------
 __RoomLang__
 
-_RoomLang is a very lightweight system to handle using basic rooms with only a size (heightxwidth) and doors to other rooms. This module also contains "RoomLoader" and "RoomSaver" which will handle importing and exporting room files.
+_RoomLang is a very lightweight system to handle using basic rooms with only a size (heightxwidth) and doors to other rooms. This module also contains "RoomLoader" and "RoomSaver" which will handle importing and exporting room files._
 
 A dictionary should be used to store the list of rooms made/imported, as this will allow your program to use included functionality as intended.
 
