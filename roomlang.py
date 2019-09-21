@@ -89,7 +89,7 @@ if __name__=="__main__":
 
     currentRoom.log()
 
-    currentRoom = currentRoom.move("s",roomList)
+    currentRoom = currentRoom.move("south",roomList)
 
     currentRoom.log()
 
