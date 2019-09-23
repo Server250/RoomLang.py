@@ -4,9 +4,9 @@ import re # Used for loading room files
 """
 
 author: Cameron Gemmell
-github: BearShark
+github: www.github.com/Server250/
 
-description: Contains all barebones RoomLang functionality and data structures
+description: Contains Room data structure, as well as a loader and a saver for the RoomLang standard. Documentation available at:
 
 """
 
@@ -78,7 +78,7 @@ class Room:
             
 def RoomLoader(fp):
     """Load a set of rooms from file fp and return it as a dict"""
-    print("RoomLang loading rooms...\t") # Print success or error on same line
+    print("RoomLang loading rooms...\t",end="") # Print success or error on same line
     
     if (os.path.isfile(fp)):
         #print("there is a file named that") # DEBUGGING CODE
@@ -173,14 +173,14 @@ def RoomLoader(fp):
 
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
-    #print("Loaded rooms") # DEBUGGING CODE
-
 # Program Entry Point
 if __name__=="__main__":
     print("This module is intended to be imported by your project, not run itself.\n")
-
+    
+    # Load rooms from file
     testList = RoomLoader("rooms.txt")
     
+    # Log all loaded rooms
     for k in testList:
         testList[k].log()
         print("\n")
