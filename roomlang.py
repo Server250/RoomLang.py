@@ -81,15 +81,22 @@ def RoomLoader(fp):
         rf = open(fp, "r") # Open the room file in readonly mode
         if (rf.mode == "r"): # If successfully opened
             lines = rf.read().split("\n")
+            lines.extend("\n") # Artificially add a blank line to the end, this means the end of the last room is found correctly
+            
             numLines = len(lines) # Store number of lines in file
             start = 0 # Start of room assumed to be beginning of file
             end = numLines # End of room assumed to be end of file
             outputDict = dict()
 
             allowedIdRegex = re.compile(r"[a-zA-Z0-9]")
-            allowedLineStarts = re.compile(r"#") # Allowed file starts that don't constitute a new room
+            allowedLineStarts = re.compile(r"!") # Special line starts that mean something
         
             while True: # Start of do-while loop to find multiple rooms
+            
+                # Variables for tracking properties of read room
+                newId = ""
+                newWid, newHei = 0,0
+                newN, newE, newS, newW = None,None,None,None
                 
                 # Loop from the assumed start to the assumed end of the room
                 for i in range(start,end):
@@ -110,9 +117,9 @@ def RoomLoader(fp):
                                     
                                     # Check for any extra information included in the room
                                     for k in range (end, numLines):
-                                        if (lines[k]): # If not a newline
-                                            print("DEALING WITH EXTRA INFO")
-                                    
+                                        if lines[k] and (re.match(allowedLineStarts,lines[k][0])): # If not a newline and is a special line start
+                                            print("DEALING WITH EXTRA INFO - " + lines[k])
+                                            end=k
                                     break
                             break
                 
