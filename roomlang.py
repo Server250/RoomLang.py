@@ -78,6 +78,8 @@ class Room:
             
 def RoomLoader(fp):
     """Load a set of rooms from file fp and return it as a dict"""
+    print("RoomLang loading rooms...\t") # Print success or error on same line
+    
     if (os.path.isfile(fp)):
         #print("there is a file named that") # DEBUGGING CODE
         rf = open(fp, "r") # Open the room file in readonly mode
@@ -101,7 +103,7 @@ def RoomLoader(fp):
                 newWid, newHei = 0,0 # Hold the height and width of the loaded room
                 newN, newE, newS, newW = None,None,None,None # Hold directions for doors loaded
                 addDict = dict() # Dictionary to hold loaded additional details
-                    
+                
                 # Loop from the assumed start to the assumed end of the room
                 for i in range(start,end):
                     
@@ -113,15 +115,34 @@ def RoomLoader(fp):
                             newId=lines[i][0] # The ID for the room has been found
                             
                             # Find the actual end of the room, always assumes the end is eof for limiting
-                            for j in range(start+1, numLines):    
+                            for j in range(start+1, numLines-1):    
                                 # If the first char of a line isn't a '#' or there isn't a line, this signals the end of the room
-                                if (not(lines[j])) or (not(lines[j][0]=="#")): # Find the end of the room
+                                if (not(lines[j])) or (j==numLines-2) or ((not(lines[j][0]=="#")) and not(lines[j+1])): # Find the end of the room
                                     end = j
                                     
                                     # DO SIZE WORK HERE before end is repositioned
                                     newHei, newWid = end-start, len(lines[start])
-                                    #print("room height is " + str(end-start) + ", width is " + str(len(lines[start]))) # DEBUGGING
                                     
+                                    # Find the doors in the room
+                                    #print("FIRST LINE EXC OWN ID: " + lines[start][1:])
+                                    #print("DID MATCH? " + str(re.match(allowedIdRegex, lines[start][1:])))
+                                    newN=re.search(allowedIdRegex, lines[start][1:]) # Find an ID on the first line of the room, missing the first char 
+                                    if newN:
+                                        newN=newN[0]                                       
+                                    newS=re.search(allowedIdRegex, lines[end-1]) # Find an ID on the last line of the room
+                                    if newS:
+                                        newS=newS[0]
+                                    # Loop through the lines of the room to find side doors
+                                    for x in range(start+1,end):
+                                        if (newW==None): # If not found a western door yet
+                                            newW=re.search(allowedIdRegex, lines[x][0]) # Should always be a character at left side, so if it is a id it is the door
+                                            if newW:
+                                                newW=newW[0]
+                                        if (len(lines[x])==newWid) and (newE==None): # If the line has characters all the way to the right (East) side and not found east door yet
+                                            newE=re.search(allowedIdRegex, lines[x][newWid-1])
+                                            if newE:
+                                                newE=newE[0]
+                                                
                                     # Check for any extra information included in the room
                                     for k in range (end, numLines):
                                         if lines[k] and (re.match(allowedLineStarts,lines[k][0])): # If not a newline and is a special line start
@@ -137,15 +158,16 @@ def RoomLoader(fp):
                             break
                 
                 # Create the room object to be added to the Room List
-                loadedRoom = Room(newId, newWid, newHei, None,None,None,None, addDict)
+                loadedRoom = Room(newId, newWid, newHei, newN,newE,newS,newW, addDict)
                 outputDict[newId]=loadedRoom
                 
-                if (end>=numLines): # End of do-while loop to detect eof
+                if (end>=numLines-2): # End of do-while loop to detect eof (-2 to excuse whitespace used as allowances for other algorithms)
                     break
                 else: # If another room should be found, reset 'start' to after end line and 'end' to numLines to assume this is final room                
                     start = end
                     end = numLines
             
+            print("Rooms loaded successfully.")
             # RETURN HERE
             return outputDict
 
@@ -155,23 +177,12 @@ def RoomLoader(fp):
 
 # Program Entry Point
 if __name__=="__main__":
-    print("This module is intended to be imported by your project, not run itself.")
-    """
-    roomList = {'a':Room('a',12,16,'b',None,'3',None), 'b':Room('b',4,5,None,None,'a',None)}
-    
-    currentRoom = roomList.get('a')
+    print("This module is intended to be imported by your project, not run itself.\n")
 
-    currentRoom.log()
-
-    currentRoom = currentRoom.move("n",roomList)
-
-    currentRoom.log()
-
-    currentRoom = currentRoom.move("south",roomList)
-
-    currentRoom.log()
-"""
     testList = RoomLoader("rooms.txt")
-    print(str(testList["f"].details["name"]))
+    
+    for k in testList:
+        testList[k].log()
+        print("\n")
     
 
