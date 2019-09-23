@@ -13,7 +13,7 @@ description: Contains all barebones RoomLang functionality and data structures
 # The data structure for holding a room.
 class Room:
     
-    def __init__(self, roomId,wid,hei,n=None,e=None,s=None,w=None):
+    def __init__(self, roomId,wid,hei,n=None,e=None,s=None,w=None,addDeets=dict()):
         """
         Initialise the "Room" class.
 
@@ -21,6 +21,7 @@ class Room:
         w - width
         h - height
         n,e,s,w - north, east, south and west doors respectively
+        addDeets - additional room information the user wants to add
         """
         self.id = roomId
         self.width = int(wid)
@@ -29,6 +30,7 @@ class Room:
         self.east = e
         self.south = s
         self.west = w
+        self.details=addDeets
 
     def log(self):
         """Print out helpful information about  a room to the console."""
@@ -89,22 +91,26 @@ def RoomLoader(fp):
             outputDict = dict()
 
             allowedIdRegex = re.compile(r"[a-zA-Z0-9]")
-            allowedLineStarts = re.compile(r"!") # Special line starts that mean something
-        
+            allowedLineStarts = re.compile(r":") # Special line starts that mean something
+            extraInfoRegex = re.compile(r":([a-zA-Z ]+):([a-zA-Z ]+)") # Info for deconstructing additional room info
+            
             while True: # Start of do-while loop to find multiple rooms
             
                 # Variables for tracking properties of read room
-                newId = ""
-                newWid, newHei = 0,0
-                newN, newE, newS, newW = None,None,None,None
-                
+                newId = "" # Hold the id of the loaded room
+                newWid, newHei = 0,0 # Hold the height and width of the loaded room
+                newN, newE, newS, newW = None,None,None,None # Hold directions for doors loaded
+                addDict = dict() # Dictionary to hold loaded additional details
+                    
                 # Loop from the assumed start to the assumed end of the room
                 for i in range(start,end):
                     
                     # Find the actual start of the next room (whitespace and comments should be allowed)
                     if (lines[i]): # Find out if there is a line there
                         if (re.match(allowedIdRegex,lines[i][0])): # If first char of a line is an id
+                            
                             start=i # The start of the next room is here
+                            newId=lines[i][0] # The ID for the room has been found
                             
                             # Find the actual end of the room, always assumes the end is eof for limiting
                             for j in range(start+1, numLines):    
@@ -112,23 +118,36 @@ def RoomLoader(fp):
                                 if (not(lines[j])) or (not(lines[j][0]=="#")): # Find the end of the room
                                     end = j
                                     
-                                    # DO SIZE WORK HERE
-                                    print("room height is " + str(end-start) + ", width is " + str(len(lines[start])))
+                                    # DO SIZE WORK HERE before end is repositioned
+                                    newHei, newWid = end-start, len(lines[start])
+                                    #print("room height is " + str(end-start) + ", width is " + str(len(lines[start]))) # DEBUGGING
                                     
                                     # Check for any extra information included in the room
                                     for k in range (end, numLines):
                                         if lines[k] and (re.match(allowedLineStarts,lines[k][0])): # If not a newline and is a special line start
-                                            print("DEALING WITH EXTRA INFO - " + lines[k])
-                                            end=k
+                                            #print("DEALING WITH EXTRA INFO - " + lines[k]) # DEBUGGING
+                                            loadedDetail=re.search(extraInfoRegex,lines[k])
+                                            #print("LOADED: " + str(loadedDetail)) # DEBUGGING
+                                            addDict[loadedDetail[1]] = loadedDetail[2] # Load the new detail into the dictionary
+
+                                            end=k # Update end to after the additional details (as this is used as next start point)
+                                        else:
+                                            break
                                     break
                             break
                 
+                # Create the room object to be added to the Room List
+                loadedRoom = Room(newId, newWid, newHei, None,None,None,None, addDict)
+                outputDict[newId]=loadedRoom
+                
                 if (end>=numLines): # End of do-while loop to detect eof
                     break
-                else: # If another room should be found, reset 'start' to after end line and 'end' to numLines to assume this is final room
+                else: # If another room should be found, reset 'start' to after end line and 'end' to numLines to assume this is final room                
                     start = end
                     end = numLines
-
+            
+            # RETURN HERE
+            return outputDict
 
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
@@ -137,7 +156,7 @@ def RoomLoader(fp):
 # Program Entry Point
 if __name__=="__main__":
     print("This module is intended to be imported by your project, not run itself.")
-    
+    """
     roomList = {'a':Room('a',12,16,'b',None,'3',None), 'b':Room('b',4,5,None,None,'a',None)}
     
     currentRoom = roomList.get('a')
@@ -151,6 +170,8 @@ if __name__=="__main__":
     currentRoom = currentRoom.move("south",roomList)
 
     currentRoom.log()
-
+"""
     testList = RoomLoader("rooms.txt")
+    print(str(testList["f"].details["name"]))
+    
 
