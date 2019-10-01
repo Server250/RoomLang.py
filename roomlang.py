@@ -173,6 +173,17 @@ def RoomLoader(fp):
 
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
+# Function for saving rooms to disk
+def RoomSaver(roomList, location, mode):
+
+    #Check location to see if existing file
+
+    # Overwrite mode will just make a whole new file
+
+    # Append mode will add to end so comments are intact
+
+    print("Room saved successfully.")
+
 # Program Entry Point
 if __name__=="__main__":
     print("This module is intended to be imported by your project, not run itself.\n")
