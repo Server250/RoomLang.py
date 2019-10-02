@@ -23,6 +23,7 @@ class Room:
         n,e,s,w - north, east, south and west doors respectively
         addDeets - additional room information the user wants to add
         """
+        
         self.id = roomId
         self.width = int(wid)
         self.height = int(hei)
@@ -174,13 +175,27 @@ def RoomLoader(fp):
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
 # Function for saving rooms to disk
-def RoomSaver(roomList, location, mode):
-
-    #Check location to see if existing file
-
-    # Overwrite mode will just make a whole new file
+def RoomSaver(roomList, location, mode="o"):
+    """
+    Save the rooms stored in roomList to a file at location. To overwrite an existing file, use "o"verwrite mode. To append to the end of the existing file, use "a"ppend mode. append by default
+    
+    """
+    
+    # Validate the input of the mode
+    mode = lower(str(mode))
+    if not (mode == "o" or mode == "a"): # If a valid mode not entered
+        raise ValueError("Incorrect argument supplied to RoomSaver: Use either 'a' for append mode or 'o' for overwrite mode (or neither for append mode).")
+    
+    # Check location to see if existing file
+    fileExists = os.path.isfile(fp)
 
     # Append mode will add to end so comments are intact
+    if (mode=="a"):
+        print("APPEND MODE")
+    # Overwrite mode will just make a whole new file
+    else: # Overwrite mode
+        print("OVERWRITE MODE")
+        
 
     print("Room saved successfully.")
 
