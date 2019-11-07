@@ -14,6 +14,5 @@ A dictionary should be used to store the list of rooms made/imported, as this wi
 --------------------------------
 __Future Development__
 
-- Give the rooms additional attributes (names, extra text)
-- Possibly add items etc
-- Add config file to enable greater customisation?
+-Complete saving functionality
+-Create basic example games
