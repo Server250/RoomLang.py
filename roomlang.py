@@ -175,30 +175,37 @@ def RoomLoader(fp):
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
 # Function for saving rooms to disk
-def RoomSaver(roomList, location, mode="o"):
+def RoomSaver(roomList, location, mode):
     """
     Save the rooms stored in roomList to a file at location. To overwrite an existing file, use "o"verwrite mode. To append to the end of the existing file, use "a"ppend mode. append by default
     
     """
     
     # Validate the input of the mode
-    mode = lower(str(mode))
-    if not (mode == "o" or mode == "a"): # If a valid mode not entered
+    mode = str(mode)
+    if not (mode == "o" or mode == "a" or mode=="O" or mode=="A"): # If a valid mode not entered
         raise ValueError("Invalid argument supplied to RoomSaver: Use either 'a' for append mode or 'o' for overwrite mode.")
     
     # Check location to see if existing file
-    fileExists = os.path.isfile(fp)
+    fileExists = os.path.isfile(location)
+
+    if not fileExists:
+       print("File not found; will be created.") 
 
     # Append mode will add to end so comments are intact
-    if (mode=="a"):
+    if (mode=="a" or mode=="A"):
         print("APPEND MODE")
-    # Overwrite mode will just make a whole new file
+	# Load rooms, append rooms that don't exist (ie room key not in file yet)
+    	# New function to just get all room IDs because no need to get all room data
+	# Overwrite mode will just make a whole new file
     else: # Overwrite mode
         print("OVERWRITE MODE")
-	
+	# Straight go down room list and save to file
+        for r in roomList:
+            print("ROOM PRINTED")	
         
 
-    print("Room saved successfully.")
+    print("Rooms saved successfully.")
 
 # Program Entry Point
 if __name__=="__main__":
@@ -211,5 +218,8 @@ if __name__=="__main__":
     for k in testList:
         testList[k].log()
         print("\n")
-    
+	
+    # Save rooms
+    RoomSaver(testList, "roomsSaved.txt", "o")   
+ 
 
