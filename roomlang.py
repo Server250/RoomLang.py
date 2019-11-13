@@ -130,7 +130,7 @@ def RoomLoader(fp):
                                     newN=re.search(allowedIdRegex, lines[start][1:]) # Find an ID on the first line of the room, missing the first char 
                                     if newN:
                                         newN=newN[0]                                       
-                                    newS=re.search(allowedIdRegex, lines[end-1]) # Find an ID on the last line of the room
+                                    newS=re.search(allowedIdRegex, lines[end-2]) # Find an ID on the last line of the room
                                     if newS:
                                         newS=newS[0]
                                     # Loop through the lines of the room to find side doors
@@ -184,7 +184,7 @@ def RoomSaver(roomList, location, mode="o"):
     # Validate the input of the mode
     mode = lower(str(mode))
     if not (mode == "o" or mode == "a"): # If a valid mode not entered
-        raise ValueError("Incorrect argument supplied to RoomSaver: Use either 'a' for append mode or 'o' for overwrite mode (or neither for append mode).")
+        raise ValueError("Invalid argument supplied to RoomSaver: Use either 'a' for append mode or 'o' for overwrite mode.")
     
     # Check location to see if existing file
     fileExists = os.path.isfile(fp)
@@ -195,6 +195,7 @@ def RoomSaver(roomList, location, mode="o"):
     # Overwrite mode will just make a whole new file
     else: # Overwrite mode
         print("OVERWRITE MODE")
+	
         
 
     print("Room saved successfully.")
