@@ -129,8 +129,9 @@ def RoomLoader(fp):
                                     #print("DID MATCH? " + str(re.match(allowedIdRegex, lines[start][1:])))
                                     newN=re.search(allowedIdRegex, lines[start][1:]) # Find an ID on the first line of the room, missing the first char 
                                     if newN:
-                                        newN=newN[0]                                       
-                                    newS=re.search(allowedIdRegex, lines[end-2]) # Find an ID on the last line of the room
+                                        newN=newN[0]                   
+                                    # TODO - MAKE "end-1" into "end-additionalDetails"
+                                    newS=re.search(allowedIdRegex, lines[end-1]) # Find an ID on the last line of the room
                                     if newS:
                                         newS=newS[0]
                                     # Loop through the lines of the room to find side doors
