@@ -200,10 +200,49 @@ def RoomSaver(roomList, location, mode):
 	# Overwrite mode will just make a whole new file
     else: # Overwrite mode
         print("OVERWRITE MODE")
-	# Straight go down room list and save to file
-        for r in roomList:
+        # Open file
+        f = open(location,"w+") # '+' means if file doesn't exist then it'll be created
+        # Straight go down room list and save to file
+        for rm in roomList:
+            
+            r = roomList[rm]
+            
+            # Used for writing doors with correct padding
+            halfW = int(r.width/2)
+            halfH = int(r.height/2)
+            
+            f.write(r.id)
+            if (r.north==None):
+                f.write(("#"*(r.width-1)) + "\n")
+            else:
+                f.write(("#"*(halfW)) + r.north + ("#"*((r.width-halfW)-2)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+            
+            f.write(("#"+(" "*(r.width-2))+"#\n")*(halfH-1))
+            if (r.west==None):
+                f.write("#")
+            else:
+                f.write(r.west)
+                
+            f.write(" "*(r.width-2))
+            
+            if (r.east==None):
+                f.write("#")
+            else:
+                f.write(r.east)
+            f.write("\n")
+            
+            f.write(("#" + " "*(r.width-2) + "#\n")*(r.height-(halfH+3)))
+            
+            if (r.south==None):
+                f.write(("#"*(r.width)) + "\n")
+            else:
+                f.write(("#"*(halfW)) + r.south + ("#"*((r.width-halfW)-1)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+            
+            f.write("\n")
+            
             print("ROOM PRINTED")	
         
+        f.close() # Close the file
 
     print("Rooms saved successfully.")
 
