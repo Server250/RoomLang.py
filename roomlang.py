@@ -118,7 +118,7 @@ def RoomLoader(fp):
                             # Find the actual end of the room, always assumes the end is eof for limiting
                             for j in range(start+1, numLines-1):    
                                 # If the first char of a line isn't a '#' or there isn't a line, this signals the end of the room
-                                if (not(lines[j])) or (j==numLines-2) or ((not(lines[j][0]=="#")) and not(lines[j+1])): # Find the end of the room
+                                if (not(lines[j])) or (j==numLines-2) or ((not(lines[j][0]=="#")) and (not(lines[j+1]) or (lines[j+1][0]==":"))): # Find the end of the room
                                     end = j
                                     
                                     # DO SIZE WORK HERE before end is repositioned
@@ -130,7 +130,6 @@ def RoomLoader(fp):
                                     newN=re.search(allowedIdRegex, lines[start][1:]) # Find an ID on the first line of the room, missing the first char 
                                     if newN:
                                         newN=newN[0]                   
-                                    # TODO - MAKE "end-1" into "end-additionalDetails"
                                     newS=re.search(allowedIdRegex, lines[end-1]) # Find an ID on the last line of the room
                                     if newS:
                                         newS=newS[0]
