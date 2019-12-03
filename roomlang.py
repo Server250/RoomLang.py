@@ -172,6 +172,46 @@ def RoomLoader(fp):
 
     else: raise ValueError("The file supplied to RoomLoader() does not exist. Make sure you include the file extension!")
 
+# Utility function to save room to file
+def RoomSave(f, r):
+    # Used for writing doors with correct padding
+    halfW = int(r.width/2)
+    halfH = int((r.height)/2)
+    #print("Room height: " + str(r.height) + "; Half height: " + str(halfH))
+    
+    f.write(r.id)
+    if (r.north==None):
+        f.write(("#"*(r.width-1)) + "\n")
+    else:
+        f.write(("#"*(halfW)) + r.north + ("#"*((r.width-halfW)-2)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+    
+    f.write(("#"+(" "*(r.width-2))+"#\n")*(halfH-1))
+    if (r.west==None):
+        f.write("#")
+    else:
+        f.write(r.west)
+        
+    f.write(" "*(r.width-2))
+    
+    if (r.east==None):
+        f.write("#")
+    else:
+        f.write(r.east)
+    f.write("\n")
+    
+    f.write(("#" + " "*(r.width-2) + "#\n")*((r.height)-(halfH+2)))
+    
+    if (r.south==None):
+        f.write(("#"*(r.width)) + "\n")
+    else:
+        f.write(("#"*(halfW)) + r.south + ("#"*((r.width-halfW)-1)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+    
+    # Print additional info
+    for (k,v) in r.details.items():
+        f.write(":"+k+":"+v+"\n")
+
+    f.write("\n")
+
 # Function for saving rooms to disk
 def RoomSaver(roomList, location, mode):
     """
@@ -192,8 +232,61 @@ def RoomSaver(roomList, location, mode):
     # Append mode will add to end so comments are intact
     if ((mode=="a" or mode=="A") and (fileExists)):
         print("Append Mode...\t",end="")
-	# Load rooms, append rooms that don't exist (ie room key not in file yet)
-    	# New function to just get all room IDs because no need to get all room data
+        f = open(location,"r")
+        fids = list()
+        # Get existing IDs
+        fcontents = f.read().split("\n")
+        roomIdRegex = re.compile(r'[a-zA-Z0-9]+')
+        #print("FCONTENTS: " + str(fcontents))
+        for fl in range(len(fcontents)):    
+            if fcontents[fl] and re.match(roomIdRegex,fcontents[fl][0]):
+                if (not(fcontents[fl][0] in fids)):
+                    fids.extend(fcontents[fl][0])
+        f = open(location,"a+")
+        for rm in roomList:
+            
+            if (not(rm in fids)):
+                print(rm)
+                r = roomList[rm]
+                
+                # Used for writing doors with correct padding
+                halfW = int(r.width/2)
+                halfH = int((r.height)/2)
+                #print("Room height: " + str(r.height) + "; Half height: " + str(halfH))
+                
+                f.write(r.id)
+                if (r.north==None):
+                    f.write(("#"*(r.width-1)) + "\n")
+                else:
+                    f.write(("#"*(halfW)) + r.north + ("#"*((r.width-halfW)-2)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+                
+                f.write(("#"+(" "*(r.width-2))+"#\n")*(halfH-1))
+                if (r.west==None):
+                    f.write("#")
+                else:
+                    f.write(r.west)
+                    
+                f.write(" "*(r.width-2))
+                
+                if (r.east==None):
+                    f.write("#")
+                else:
+                    f.write(r.east)
+                f.write("\n")
+                
+                f.write(("#" + " "*(r.width-2) + "#\n")*((r.height)-(halfH+2)))
+                
+                if (r.south==None):
+                    f.write(("#"*(r.width)) + "\n")
+                else:
+                    f.write(("#"*(halfW)) + r.south + ("#"*((r.width-halfW)-1)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
+                
+                # Print additional info
+                for (k,v) in r.details.items():
+                    f.write(":"+k+":"+v+"\n")
+
+                f.write("\n")
+
 	# Overwrite mode will just make a whole new file
     else: # Overwrite mode
         print("Overwrite Mode...\t",end="")
@@ -261,6 +354,6 @@ if __name__=="__main__":
        # print("\n")
 	
     # Save rooms
-    RoomSaver(testList, "roomsSaved.txt", "o")   
+    RoomSaver(testList, "roomsSaved.txt", "a")   
  
 
