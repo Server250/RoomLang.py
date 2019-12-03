@@ -1,7 +1,9 @@
-# RoomLang
+**RoomLang**
 --------------------------------
-Current Work Finished: Project finished, "Future Development" work will be implemented at a later date.
+_Current Work Finished: Project finished, "Future Development" work will be implemented at a later date._
+
 --------------------------------
+
 All project items relating to "RoomLang", a baseline for creating flexible rooms for various different game types. The main focus of "RoomLang" is to be easily usable and flexible, so users can harness it as they wish to make more specific modules.
 
 Hopefully, "RoomLang" will be a nice stepping stone from graphical editors for game design.
@@ -16,5 +18,5 @@ A dictionary should be used to store the list of rooms made/imported, as this wi
 --------------------------------
 __Future Development__
 
--Create basic example games/
+-Create basic example games
 -Create Documentation
