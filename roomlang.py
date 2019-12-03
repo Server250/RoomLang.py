@@ -118,15 +118,13 @@ def RoomLoader(fp):
                             # Find the actual end of the room, always assumes the end is eof for limiting
                             for j in range(start+1, numLines-1):    
                                 # If the first char of a line isn't a '#' or there isn't a line, this signals the end of the room
-                                if (not(lines[j])) or (j==numLines-2) or ((not(lines[j][0]=="#")) and (not(lines[j+1]) or (lines[j+1][0]==":"))): # Find the end of the room
-                                    end = j
+                                if not(lines[j+1]) or (j==numLines-2) or ((not(lines[j+1][0]=="#")) and (not(lines[j+1]) or (lines[j+1][0]==":"))): # Find the end of the room
+                                    end = j+1
                                     
                                     # DO SIZE WORK HERE before end is repositioned
                                     newHei, newWid = end-start, len(lines[start])
                                     
                                     # Find the doors in the room
-                                    #print("FIRST LINE EXC OWN ID: " + lines[start][1:])
-                                    #print("DID MATCH? " + str(re.match(allowedIdRegex, lines[start][1:])))
                                     newN=re.search(allowedIdRegex, lines[start][1:]) # Find an ID on the first line of the room, missing the first char 
                                     if newN:
                                         newN=newN[0]                   
@@ -189,17 +187,16 @@ def RoomSaver(roomList, location, mode):
     # Check location to see if existing file
     fileExists = os.path.isfile(location)
 
-    if not fileExists:
-       print("File not found; will be created.") 
+    print("RoomLang loading rooms...\t",end="")
 
     # Append mode will add to end so comments are intact
-    if (mode=="a" or mode=="A"):
-        print("APPEND MODE")
+    if ((mode=="a" or mode=="A") and (fileExists)):
+        print("Append Mode...\t",end="")
 	# Load rooms, append rooms that don't exist (ie room key not in file yet)
     	# New function to just get all room IDs because no need to get all room data
 	# Overwrite mode will just make a whole new file
     else: # Overwrite mode
-        print("OVERWRITE MODE")
+        print("Overwrite Mode...\t",end="")
         # Open file
         f = open(location,"w+") # '+' means if file doesn't exist then it'll be created
         # Straight go down room list and save to file
@@ -209,7 +206,8 @@ def RoomSaver(roomList, location, mode):
             
             # Used for writing doors with correct padding
             halfW = int(r.width/2)
-            halfH = int(r.height/2)
+            halfH = int((r.height)/2)
+            #print("Room height: " + str(r.height) + "; Half height: " + str(halfH))
             
             f.write(r.id)
             if (r.north==None):
@@ -231,16 +229,20 @@ def RoomSaver(roomList, location, mode):
                 f.write(r.east)
             f.write("\n")
             
-            f.write(("#" + " "*(r.width-2) + "#\n")*(r.height-(halfH+3)))
+            f.write(("#" + " "*(r.width-2) + "#\n")*((r.height)-(halfH+2)))
             
             if (r.south==None):
                 f.write(("#"*(r.width)) + "\n")
             else:
                 f.write(("#"*(halfW)) + r.south + ("#"*((r.width-halfW)-1)) + "\n") # r.width - halfW used to make sure odd numbers written without being rounded twice/not at all
             
+            # Print additional info
+            for (k,v) in r.details.items():
+                f.write(":"+k+":"+v+"\n")
+
             f.write("\n")
             
-            print("ROOM PRINTED")	
+            #print("ROOM PRINTED")	
         
         f.close() # Close the file
 
@@ -254,9 +256,9 @@ if __name__=="__main__":
     testList = RoomLoader("rooms.txt")
     
     # Log all loaded rooms
-    for k in testList:
-        testList[k].log()
-        print("\n")
+    #for k in testList:
+       # testList[k].log()
+       # print("\n")
 	
     # Save rooms
     RoomSaver(testList, "roomsSaved.txt", "o")   
